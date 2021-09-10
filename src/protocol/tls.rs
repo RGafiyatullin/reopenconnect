@@ -10,7 +10,7 @@ use crate::AnyError;
 
 #[derive(Debug, Clone, ::structopt::StructOpt)]
 pub struct CARootsConfig {
-    #[structopt(long = "add-ca-roots")]
+    #[structopt(long = "add-ca-roots", env = "ADD_CA_ROOTS")]
     pub files: Vec<String>,
 }
 

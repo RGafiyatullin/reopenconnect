@@ -2,10 +2,18 @@
 name = "reopenconnect"
 version = "0.1.0"
 edition = "2018"
+license = "MIT"
+description = "Another implementation of OpenConnect Protocol"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+default = ["with-null-tun"]
+with-null-tun = []
+with-tokio-tun = ["tokio-tun"]
+
 [dependencies]
+dotenv = "^0.15"
 eyre = "^0.6"
 thiserror = "^1"
 futures = "^0.3"
@@ -17,7 +25,25 @@ structopt = "^0.3"
 rustls = {version = "^0.19"}
 tokio-rustls = {version = "^0.22"}
 webpki = "^0.21.0"
-hyper = {version = "^0.14", features = ["http1", "client"]}
 str-macro = "^1"
 async-trait = "^0.1"
 minidom = "^0.13"
+serde = {version = "^1", features = ["derive"]}
+
+hyper = {path = "deps/hyper", version = "^0.14", features = ["http1", "client", "server"]}
+
+packet = "^0.1"
+ipnetwork = "^0.18"
+byteorder = "^1"
+pretty-hex = "0.2"
+
+openssl = "^0.10"
+base64 = "^0.13"
+
+webrtc-dtls = "^0.4"
+anyhow = "^1"
+
+tokio-tun = { version = "^0.3", optional = true }
+rand = "^0.8"
+
+rustls-native-certs = { version = "0.5", features = ["rustls"] }

@@ -1,15 +1,12 @@
 use super::*;
 
-use ::hyper::client::conn as http_conn;
-
 impl<IO, Ctx> Authenticator<IO, Ctx>
 where
     IO: HttpIo,
+    Ctx: BorrowMutAuthenticatorContext,
 {
-    pub async fn create(io: IO, context: Ctx) -> Result<Self, AnyError> {
-        let (http_conn_api, http_conn) = http_conn::handshake(io).await?;
-
-        let http_conn_running = http_conn.without_shutdown().boxed().fuse();
+    pub async fn create(io: IO, context: Ctx) -> Result<Self, AuthenticatorError> {
+        let (http_conn_api, http_conn_running) = Self::http_handshake(io).await?;
 
         let authenticator = Self {
             context,

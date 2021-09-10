@@ -1,40 +1,44 @@
 use super::*;
 
-use super::request::ToXml;
+use crate::protocol::cac::authc::client_pdu::ToXml;
+use crate::util::HttpHeaders;
 
 impl<IO, Ctx> Authenticator<IO, Ctx>
 where
     IO: HttpIo,
 {
-    pub(super) fn create_request<P, Hs, B, Hk, Hv>(
+    pub(super) fn create_request<P, B>(
         &mut self,
         method: HttpMethod,
         path: P,
-        headers: Hs,
+        headers: HttpHeaders,
         body_opt: Option<B>,
-    ) -> Result<HttpRequest<HttpBody>, AnyError>
+    ) -> Result<HttpRequest<HttpBody>, HttpError>
     where
         P: AsRef<str>,
-        Hs: IntoIterator<Item = (Hk, Hv)>,
         B: ToXml,
-        Hk: AsRef<str>,
-        Hv: AsRef<[u8]>,
     {
         let mut builder = HttpRequest::builder().method(method).uri(path.as_ref());
 
-        for (k, v) in headers {
-            builder = builder.header(k.as_ref(), v.as_ref());
+        if let Some(hs) = builder.headers_mut() {
+            *hs = headers
         }
 
         let body = if let Some(body) = body_opt {
             let xml = body.to_xml();
-            let xml = String::from(&xml);
+            let xml = format!(
+                r#"<?xml version="1.0" encoding="UTF-8"?>{}"#,
+                String::from(&xml).replace(r#" xmlns="""#, "")
+            );
+
+            log::trace!("BODY: {}", xml);
+
             HttpBody::from(xml)
         } else {
             HttpBody::empty()
         };
 
-        let request = builder.body(body)?;
+        let request = builder.body(body).map_err(HttpError::Request)?;
 
         Ok(request)
     }

@@ -1,0 +1,39 @@
+version: '3.8'
+volumes:
+  cargo-target:
+  cargo-registry:
+  reopenconnect-var-run:
+services:
+  build:
+    build:
+      context: images.d/build
+    volumes:
+      - '../../src:/project/src:ro'
+      - '../../examples:/project/examples:ro'
+      - '../../Cargo.toml:/project/Cargo.toml:ro'
+      - '../../deps:/project/deps:ro'
+      - 'cargo-target:/project/target:rw'
+      - 'cargo-registry:/usr/local/cargo/registry:rw'
+    entrypoint: sleep infinity
+    working_dir: /project
+  run:
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    build:
+      context: images.d/run
+    volumes:
+      - 'cargo-target:/opt/reopenconnect:ro'
+      - 'reopenconnect-var-run:/var/run/reopenconnect:rw'
+      - '/dev/net:/dev/net:rw'
+      - '../../examples/priv/run-01.sh:/opt/connect.sh:ro'
+      - '../../../anyconnect-gw/ca-roots.pem:/opt/ca-roots.pem:ro'
+    entrypoint: sleep infinity
+    working_dir: /var/run/reopenconnect
+    environment:
+      REOPENCONNECT: /opt/reopenconnect/debug/reopenconnect
+      CA_ROOTS: /opt/ca-roots.pem
+      RUST_BACKTRACE: full
+      RUST_LOG: info,hyper=debug,reopenconnect=trace
+
+    

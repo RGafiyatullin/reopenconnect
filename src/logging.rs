@@ -4,10 +4,21 @@ pub enum LoggingBackend {
     Stderr,
 }
 
-#[derive(Debug, ::structopt::StructOpt)]
+#[derive(Debug, Clone, ::structopt::StructOpt)]
 pub struct LoggingConfig {
     #[structopt(long = "log-backend", default_value = "stderr")]
     pub backend: LoggingBackend,
+}
+
+impl LoggingConfig {
+    pub fn setup(&self) {
+        match self.backend {
+            LoggingBackend::Stderr => {
+                ::pretty_env_logger::init_timed();
+            }
+            _ => unimplemented!(),
+        }
+    }
 }
 
 impl std::str::FromStr for LoggingBackend {

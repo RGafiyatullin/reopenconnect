@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config-auth client="vpn" type="auth-request" aggregate-auth-version="2">
+<opaque is-for="sg">
+<tunnel-group>Anyconnect-CP-Full-VPN-MFA</tunnel-group>
+<aggauth-handle>-2077737062</aggauth-handle>
+<auth-method>multiple-cert</auth-method>
+<auth-method>single-sign-on</auth-method>
+<group-alias>Full VPN MFA</group-alias>
+<config-hash>1621675887469</config-hash>
+</opaque>
+<auth id="main">
+<title>Login</title>
+<message>Please enter your username and password.</message>
+<banner></banner>
+<form>
+<input type="text" name="username" label="Username:"></input>
+<input type="password" name="password" label="Password:"></input>
+<select name="group_list" label="GROUP:">
+<option>Default VPN MFA</option>
+<option selected="true">Full VPN MFA</option>
+</select>
+</form>
+</auth>
+</config-auth>

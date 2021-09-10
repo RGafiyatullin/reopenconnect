@@ -1,5 +1,13 @@
-mod connect_to;
-pub use connect_to::ConnectTo;
-
 mod authenticate;
-pub use authenticate::Authenticate;
+use authenticate::Authenticate;
+
+mod common;
+
+mod connect;
+use connect::Connect;
+
+mod authenticate_and_connect;
+use authenticate_and_connect::AuthenticateAndConnect;
+
+mod reopenconnect;
+pub use reopenconnect::ReOpenConnect;
