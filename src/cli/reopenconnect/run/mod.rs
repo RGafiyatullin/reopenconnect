@@ -48,9 +48,6 @@ impl ReOpenConnect {
 
         let tun_dev = create_tundev::run(tun_dev_args, &cstp.cstp_props, &cstp.context).await?;
 
-        let (mut cstp_io, _tun_dev) = cstp.run(cstp_io, tun_dev).await?;
-
-        log::trace!("on-connected handler: {:?}", self.on_connected());
         if let Some(on_connected) = self.on_connected() {
             log::info!("spawning the on-connected handler: {:?}", on_connected);
             let mut command = ::tokio::process::Command::new(on_connected);
@@ -79,6 +76,8 @@ impl ReOpenConnect {
                 ))?
             }
         }
+
+        let (mut cstp_io, _tun_dev) = cstp.run(cstp_io, tun_dev).await?;
 
         let () = cstp_io.shutdown().await?;
 
