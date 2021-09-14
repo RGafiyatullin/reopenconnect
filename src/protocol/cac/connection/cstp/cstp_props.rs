@@ -20,17 +20,22 @@ pub struct CstpProps {
     pub http_headers: HttpHeaders,
 }
 
-fn serialize_http_headers<S: ::serde::Serializer>(http_headers: &HttpHeaders, serializer: S) -> Result<S::Ok, S::Error> {
+fn serialize_http_headers<S: ::serde::Serializer>(
+    http_headers: &HttpHeaders,
+    serializer: S,
+) -> Result<S::Ok, S::Error> {
     use ::serde::Serialize;
-    
-    http_headers.iter().filter_map(|(header_name, header_value)| {
-        let header_name = header_name.as_str();
-        if let Ok(header_value) = std::str::from_utf8(header_value.as_bytes()) {
-            Some((header_name, header_value))
-        } else {
-            None
-        }
-    }).collect::<Vec<_>>().serialize(serializer)
+
+    http_headers
+        .iter()
+        .filter_map(|(header_name, header_value)| {
+            let header_name = header_name.as_str();
+            if let Ok(header_value) = std::str::from_utf8(header_value.as_bytes()) {
+                Some((header_name, header_value))
+            } else {
+                None
+            }
+        })
+        .collect::<Vec<_>>()
+        .serialize(serializer)
 }
-
-

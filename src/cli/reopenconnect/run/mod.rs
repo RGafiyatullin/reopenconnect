@@ -50,17 +50,21 @@ impl ReOpenConnect {
 
         let (mut cstp_io, _tun_dev) = cstp.run(cstp_io, tun_dev).await?;
 
-        
-
+        log::trace!("on-connected handler: {:?}", self.on_connected());
         if let Some(on_connected) = self.on_connected() {
             log::info!("spawning the on-connected handler: {:?}", on_connected);
             let mut command = ::tokio::process::Command::new(on_connected);
             let _ = command.stdin(std::process::Stdio::piped());
             let mut child = command.spawn()?;
-            let mut child_stdin = child.stdin.take().ok_or_else(|| ::eyre::eyre!("Failed to capture child's stdin"))?;
+            let mut child_stdin = child
+                .stdin
+                .take()
+                .ok_or_else(|| ::eyre::eyre!("Failed to capture child's stdin"))?;
 
             let cstp_props_serialized = ::serde_json::to_string_pretty(&cstp.cstp_props)?;
-            let () = child_stdin.write_all(cstp_props_serialized.as_bytes()).await?;
+            let () = child_stdin
+                .write_all(cstp_props_serialized.as_bytes())
+                .await?;
             let () = child_stdin.flush().await?;
             let () = std::mem::drop(child_stdin);
 
