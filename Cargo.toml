@@ -1,6 +1,6 @@
 [package]
 name = "reopenconnect"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2018"
 license = "MIT"
 description = "Another implementation of OpenConnect Protocol"
@@ -30,7 +30,7 @@ async-trait = "^0.1"
 minidom = "^0.13"
 serde = {version = "^1", features = ["derive"]}
 
-hyper = {path = "deps/hyper", version = "^0.14", features = ["http1", "client", "server"]}
+hyper = { git = "https://github.com/RGafiyatullin/hyper.git", tag = "v0.14.12-MAX_HEADERS_1000", features = ["http1", "client", "server"]}
 
 packet = "^0.1"
 ipnetwork = "^0.18"
