@@ -44,7 +44,7 @@ base64 = "^0.13"
 webrtc-dtls = "^0.4"
 anyhow = "^1"
 
-tokio-tun = { version = "^0.3", optional = true }
+tokio-tun = { git = "https://github.com/RGafiyatullin/tokio-tun.git", tag = "0.3.15-c_char-arm-fix", optional = true }
 rand = "^0.8"
 
 rustls-native-certs = { version = "0.5", features = ["rustls"] }
