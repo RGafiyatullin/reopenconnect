@@ -50,6 +50,18 @@ impl ReOpenConnect {
 
         let (mut cstp_io, _tun_dev) = cstp.run(cstp_io, tun_dev).await?;
 
+        if let Some(on_connected) = self.on_connected() {
+            let status = ::tokio::process::Command::new(on_connected)
+                .status()
+                .await?;
+            if !status.success() {
+                Err(::eyre::eyre!(
+                    "on-connected handler exited with non-zero status: {:?}",
+                    status
+                ))?
+            }
+        }
+
         let () = cstp_io.shutdown().await?;
 
         Ok(())

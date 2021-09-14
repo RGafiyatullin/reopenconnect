@@ -47,4 +47,11 @@ impl ReOpenConnect {
             _ => None,
         }
     }
+    pub(super) fn on_connected(&self) -> Option<&str> {
+        match &self.sub {
+            Sub::ConnectOnly(sub) => sub.on_connected.as_ref().map(AsRef::as_ref),
+            Sub::AuthenticateAndConnect(sub) => sub.on_connected.as_ref().map(AsRef::as_ref),
+            _ => None,
+        }
+    }
 }

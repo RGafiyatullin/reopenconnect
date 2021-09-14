@@ -10,4 +10,7 @@ pub struct Connect {
 
     #[structopt(flatten)]
     pub tun_dev: TunDevArgs,
+
+    #[structopt(long)]
+    pub on_connected: Option<String>,
 }
