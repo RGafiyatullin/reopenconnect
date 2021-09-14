@@ -53,16 +53,21 @@ impl ReOpenConnect {
         
 
         if let Some(on_connected) = self.on_connected() {
+            log::info!("spawning the on-connected handler: {:?}", on_connected);
             let mut command = ::tokio::process::Command::new(on_connected);
             let _ = command.stdin(std::process::Stdio::piped());
             let mut child = command.spawn()?;
-            let mut child_stin = child.stdin.take().ok_or_else(|| ::eyre::eyre!("Failed to capture child's stdin"))?;
+            let mut child_stdin = child.stdin.take().ok_or_else(|| ::eyre::eyre!("Failed to capture child's stdin"))?;
 
             let cstp_props_serialized = ::serde_json::to_string_pretty(&cstp.cstp_props)?;
-            let () = child_stin.write_all(cstp_props_serialized.as_bytes()).await?;
+            let () = child_stdin.write_all(cstp_props_serialized.as_bytes()).await?;
+            let () = child_stdin.flush().await?;
+            let () = std::mem::drop(child_stdin);
 
             let child_exit_status = child.wait().await?;
-            
+
+            log::info!("on-connected handler exited: {:?}", child_exit_status);
+
             if !child_exit_status.success() {
                 Err(::eyre::eyre!(
                     "on-connected handler exited with non-zero status: {:?}",
