@@ -11,3 +11,6 @@ use authenticate_and_connect::AuthenticateAndConnect;
 
 mod reopenconnect;
 pub use reopenconnect::ReOpenConnect;
+
+mod reopenconnect_strap;
+pub use reopenconnect_strap::ReOpenConnectStrap;
