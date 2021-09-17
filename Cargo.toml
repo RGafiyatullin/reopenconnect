@@ -37,6 +37,7 @@ packet = "^0.1"
 ipnetwork = "^0.18"
 byteorder = "^1"
 pretty-hex = "0.2"
+hex = "^0.4"
 
 openssl = "^0.10"
 base64 = "^0.13"

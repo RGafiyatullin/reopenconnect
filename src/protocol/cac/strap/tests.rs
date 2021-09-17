@@ -45,3 +45,9 @@ fn t02() {
 
     // assert_eq!(strap1.verify_b64(), Some(str!("")));
 }
+
+#[test]
+fn f03() {
+    let strap = Strap::from_privkey_b64("MHcCAQEEIJV55XPXEUczqxJ+7XVaCVxHczD8iu7exfFimpuT5ZTIoAoGCCqGSM49AwEHoUQDQgAEoXWlyxI++eD+lhLKXCfH8dIzPxF175I2otM+WzFLN1zC9IxwWwalhaTL21+AAJx4HH2eBUs3Vz0qxU16f3QyxQ==").unwrap();
+    assert_eq!(strap.pubkey_b64().unwrap(), "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEoXWlyxI++eD+lhLKXCfH8dIzPxF175I2otM+WzFLN1zC9IxwWwalhaTL21+AAJx4HH2eBUs3Vz0qxU16f3QyxQ==");
+}
