@@ -43,14 +43,14 @@ impl<Ctx> Cstp<Ctx> {
     }
 }
 
-async fn run_tun_dev_read<TunIoRx, CstpQTx>(
+async fn run_tun_dev_read<TunIoRx>(
     mut tun_io_rx: TunIoRx,
-    mut cstp_q_tx: CstpQTx,
+    mut cstp_q_tx: mpsc::Sender<CstpFrame>,
 ) -> Result<(), CstpChannelError>
 where
     TunIoRx: AsyncRead + Send + Sync + Unpin,
-    CstpQTx: Sink<CstpFrame> + Send + Sync + Unpin,
-    CstpQTx::Error: StdError + Send + Sync + 'static,
+    // CstpQTx: Sink<CstpFrame> + Send + Sync + Unpin,
+    // CstpQTx::Error: StdError + Send + Sync + 'static,
 {
     let mut buf = [0 as u8; MAX_MTU];
     loop {
@@ -62,12 +62,19 @@ where
         let ip_packet = &mut buf[0..bytes_read];
 
         let cstp_frame = CstpFrame::Data(ip_packet[..].to_vec());
-        // let cstp_frame = CstpFrame::DpdReq(ip_packet.to_vec());
-        let () = cstp_q_tx
-            .send(cstp_frame)
-            .await
-            .map_err(Into::into)
-            .map_err(CstpChannelError::Mpsc)?;
+
+        if let Err(reason) = cstp_q_tx.try_send(cstp_frame) {
+            if !reason.is_full() {
+                Err(CstpChannelError::Mpsc(reason.into()))?
+            } else {
+                log::warn!("mpsc-full. Dropping a packet");
+            }
+        }
+        // let () = cstp_q_tx
+        //     .send(cstp_frame)
+        //     .await
+        //     .map_err(Into::into)
+        //     .map_err(CstpChannelError::Mpsc)?;
     }
 }
 

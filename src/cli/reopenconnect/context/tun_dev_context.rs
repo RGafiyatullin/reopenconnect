@@ -4,7 +4,7 @@ use super::*;
 
 #[async_trait::async_trait]
 impl TunDevContext for Context {
-    async fn tun_dev_created(&mut self, tun_dev_name: &str) -> Result<(), AnyError> {
+    async fn tun_dev_created(&mut self, _tun_dev_name: &str) -> Result<(), AnyError> {
         // for network in &self.split_routes_ipv4 {
         //     let mut command = ::tokio::process::Command::new("/sbin/ip");
         //     command
